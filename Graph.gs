@@ -6,7 +6,7 @@
 /**
  * Returns a map of nodes from the tables listed in 'tables'. Nodes are mapped by node id, which is format 'TableName.PrimaryKey'.
  * Each node has following schema:
- * { row_i : Integer, table: String, ref_out: List<{col_i: Integer, fk: String}>, ref_in: List<String> }
+ * { pk : String, row_i : Integer, table: String, ref_out: List<{col_i: Integer, fk: String}>, ref_in: List<String> }
  * Function appends errors to an array out_errors, passed as a parameter. Error object conforms following schema:
  * { desc : String, table_name : String, row_i : Integer}
  */
@@ -21,8 +21,8 @@ function generateGraph(out_errors) {
       var row_data = sheet.getRange(row_i, 1, 1, sheet.getMaxColumns()).getValues()[0];
       var pkstr = getPkString(row_data, pk_cols);
       if (pkstr) {
-        var row = {row_i: row_i, table: table_key, ref_out: [], ref_in: []};
         var key = table_key + "." + pkstr;
+        var row = {pk: pkstr, row_i: row_i, table: table_key, ref_out: [], ref_in: []};
         if (rows[key]) {
           out_errors.push({desc: "Duplicate primary key in table " + table_key + ": " + pkstr, table_name: table_key, row_i: row_i});
           out_errors.push({desc: "Duplicate primary key in table " + table_key + ": " + pkstr, table_name: table_key, row_i: rows[key].row_i});

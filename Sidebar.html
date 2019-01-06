@@ -4,15 +4,17 @@
     <base target="_top">
   </head>
   <body>
-    <p>Yay, relational data manager is all set!</p>
     
-    <p>To edit the data model, click <a href="https://script.google.com/macros/d/MuyeWfeJAuqhNRoVZQYG45eJNbaIUoCr_/edit?uiv=2&mid=ACjPJvF7mgOxc76UGsIiWoZ4FyAW3RIkflLTtpbFzVtxRcISdz542inYyPxTjar0E8T4NA0aT6bTFu0Hz2ytJdiimF0mKmrOPCh8ZtxFAAAMC7kG3KGJuIFPUqLfmInC1fh92_eH5HgMtlI">here</a> or open file Model.gs from Tools -> Script Editor </p>
+    <h2 id="row_id"></h2>
     
-    <h4>References</h4>
+    <div id="curr_data"></div>
+    
     <div id="info_out"></div>
 
     <h4>Referrers</h4>
     <div id="info_in"></div>
+    
+    <p>To edit the data model, click <a href="https://script.google.com/macros/d/MuyeWfeJAuqhNRoVZQYG45eJNbaIUoCr_/edit?uiv=2&mid=ACjPJvF7mgOxc76UGsIiWoZ4FyAW3RIkflLTtpbFzVtxRcISdz542inYyPxTjar0E8T4NA0aT6bTFu0Hz2ytJdiimF0mKmrOPCh8ZtxFAAAMC7kG3KGJuIFPUqLfmInC1fh92_eH5HgMtlI">here</a> or open file Model.gs from Tools -> Script Editor </p>
     
     <script>
     
@@ -43,11 +45,13 @@
     }
     
     function receivedLocalInfo(info) {
+      var current_data = info.current_data;
       var selfRow = info.current;
       var neighbors = info.neighbors;
     
       var el_in = document.getElementById("info_in");
       var el_out = document.getElementById("info_out");
+      var el_curr = document.getElementById("curr_data");
       
       // Remove old children
       while(el_in.firstChild) {
@@ -56,21 +60,29 @@
       while(el_out.firstChild) {
         el_out.removeChild(el_out.firstChild);
       }
+      while(el_curr.firstChild) {
+        el_curr.removeChild(el_curr.firstChild);
+      }
+      
+      el_curr.appendChild(createRowElement("", current_data));
+      
+      document.getElementById("row_id").innerText = selfRow.pk;
       
       for(var ref_in_k in selfRow.ref_in) {
         var ref_in = selfRow.ref_in[ref_in_k];
         var node = neighbors[ref_in];
         //var itm = document.createElement("li");
         //itm.innerText = ref_in + ": " + JSON.stringify(node);
-        var itm = createRowElement("", node);
+        var itm = createRowElement(ref_in, node);
         el_in.appendChild(itm);
       }
+      
       for(var ref_out_k in selfRow.ref_out) {
         var ref_out = selfRow.ref_out[ref_out_k];
         var node = neighbors[ref_out.fk];
         //var itm = document.createElement("li");
         //itm.innerText = ref_out.fk + ": " + JSON.stringify(node);
-        var itm = createRowElement(node[ref_out.col_i][0], node);
+        var itm = createRowElement(info.current_data[ref_out.col_i-1][0], node);
         el_out.appendChild(itm);
       }
     }
@@ -80,12 +92,12 @@
       setTimeout(updateSelection, 3000);
     }
     
-    setTimeout(updateSelection, 3000);
+    updateSelection();
     
     </script>
     
     
-    <input type="button" value="Close" onclick="google.script.host.close()" />
+
   </body>
 </html>
 

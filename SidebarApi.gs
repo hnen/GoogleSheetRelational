@@ -26,6 +26,7 @@ function getLocalInfo() {
     
   return {
     current: currentRow,
+    current_data: getRow(currentRow.table, currentRow.row_i),
     neighbors: neighbors
   };
 }

@@ -2,32 +2,19 @@
  * Entry points for the add-on.
  */
 
-function onOpen(e) {  
-  SpreadsheetApp.getUi().createMenu('Relational').addItem('Show Sidebar', 'openSidebar').addToUi();
-  
+var appName = '⋈';
+
+function onOpen(e) {    
   var ss = SpreadsheetApp.getActiveSpreadsheet();  
-  ss.toast('Data Model Manager enabled');
+  ss.toast('Staring up...', appName);
   
   errors = [];
   var graph = generateGraph(errors);
   updateCache(graph);
   formatErrors(errors);
-  addForeignLinks(graph);
-  //if (errors.length > 0) {
-  //  Browser.msgBox(JSON.stringify(errors));
-  //}
   
-  ss.toast('Finished initialising', 'Data Model Manager'); 
-  
-  openSidebar();
-
-}
-
-function openSidebar() {
-  var html = HtmlService.createHtmlOutputFromFile('Sidebar.html')
-  .setTitle("Main")
-  .setWidth(300);  
-  SpreadsheetApp.getUi().showSidebar(html);
+  SpreadsheetApp.getUi().createMenu(appName).addItem('Open Inspector', 'openSidebar').addToUi();
+  ss.toast('Finished initialising', appName);  
 }
 
 function onEdit(e) {
@@ -39,24 +26,6 @@ function onEdit(e) {
   var graph = generateGraph(errors);
   updateCache(graph);
   formatErrors(errors);
-  addForeignLinks(graph);
-  
-  //if (errors.length > 0) {
-  //  Browser.msgBox(JSON.stringify(errors));
-  //}
-}
-
-function addForeignLinks(graph) {
-  for(var row_key in graph) {
-    var row = graph[row_key];
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row.table);
-    for(var ref_out_i in row.ref_out) {
-      var ref_out = row.ref_out[ref_out_i];
-      var range = sheet.getRange(row.row_i, ref_out.col_i);
-      var val = range.getValue();
-      
-    }
-  }
 }
 
 function formatErrors(errors) {
@@ -75,5 +44,13 @@ function formatErrors(errors) {
     range.setBackground('red');
     sheet.setTabColor('red');
   }
+}
+
+
+function openSidebar() {
+  var html = HtmlService.createHtmlOutputFromFile('Sidebar.html')
+  .setTitle("Inspector")
+  .setWidth(300);  
+  SpreadsheetApp.getUi().showSidebar(html);
 }
 
