@@ -6,7 +6,7 @@
 /**
  * Returns a map of nodes from the tables listed in 'tables'. Nodes are mapped by node id, which is format 'TableName.PrimaryKey'.
  * Each node has following schema:
- * { row_i : Integer, table: String, ref_out: List<String>, ref_in: List<String> }
+ * { row_i : Integer, table: String, ref_out: List<{col_i: Integer, fk: String}>, ref_in: List<String> }
  * Function appends errors to an array out_errors, passed as a parameter. Error object conforms following schema:
  * { desc : String, table_name : String, row_i : Integer}
  */
